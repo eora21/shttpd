@@ -13,32 +13,40 @@ public class GetHandler implements MethodHandler {
     @Override
     public String getResponseData(String filePath) throws IOException {
         File file = new File(filePath);
+
         if (!file.exists()) {
-            String body = HTMLConstructor.createHtmlData(Status.NOT_FOUND.answer());
-            String header = HeaderConstructor.getHeaderData(
-                    Status.NOT_FOUND, "html", body.getBytes(StandardCharsets.UTF_8).length);
-            return joinHeadAndBody(header, body);
+            return response(Status.NOT_FOUND);
         }
 
         if (!file.canRead()) {
-            String body = HTMLConstructor.createHtmlData(Status.FORBIDDEN.answer());
-            String header = HeaderConstructor.getHeaderData(
-                    Status.FORBIDDEN, "html", body.getBytes(StandardCharsets.UTF_8).length);
-            return joinHeadAndBody(header, body);
+            return response(Status.FORBIDDEN);
         }
 
-        if (file.isFile()) {
-            byte[] bytes = Files.readAllBytes(file.toPath());
-            String body = new String(bytes);
-            String contentType = filePath.substring(filePath.lastIndexOf('.') + 1);
-            String header = HeaderConstructor.getHeaderData(
-                    Status.OK, contentType, bytes.length);
-            return joinHeadAndBody(header, body);
+        if (file.isDirectory()) {
+            return response(HTMLConstructor.process(file.listFiles()), Status.OK);
         }
 
-        String body = HTMLConstructor.process(file.listFiles());
+        return response(file);
+    }
+
+    private static String response(Status status) {
+        String body = HTMLConstructor.createHtmlData(status.answer());
+        return response(body, status);
+    }
+
+    private static String response(String body, Status status) {
         String header = HeaderConstructor.getHeaderData(
-                Status.OK, "html", body.getBytes(StandardCharsets.UTF_8).length);
+                status, "html", body.getBytes(StandardCharsets.UTF_8).length);
+        return joinHeadAndBody(header, body);
+    }
+
+    private static String response(File file) throws IOException {
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        String body = new String(bytes);
+        String filePath = file.getPath();
+        String contentType = filePath.substring(filePath.lastIndexOf('.') + 1);
+        String header = HeaderConstructor.getHeaderData(
+                Status.OK, contentType, bytes.length);
         return joinHeadAndBody(header, body);
     }
 
