@@ -1,14 +1,13 @@
 package response.total;
 
 import response.method.DeleteHandler;
+import response.method.ExceptionHandler;
 import response.method.GetHandler;
 import response.method.MethodHandler;
 import response.method.PostHandler;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class ResponseConstructor {
 
@@ -16,18 +15,16 @@ public class ResponseConstructor {
 
     }
 
-    private static final Map<String, Optional<MethodHandler>> METHOD_HANDLERS = new HashMap<>();
+    private static final ExceptionHandler EXCEPTION_HANDLER = new ExceptionHandler();
 
-    static {
-        METHOD_HANDLERS.put("GET", Optional.of(new GetHandler()));
-        METHOD_HANDLERS.put("POST", Optional.of(new PostHandler()));
-        METHOD_HANDLERS.put("DELETE", Optional.of(new DeleteHandler()));
-    }
+    private static final Map<String, MethodHandler> METHOD_HANDLERS = Map.of(
+            "GET", new GetHandler(),
+            "POST", new PostHandler(),
+            "DELETE", new DeleteHandler()
+    );
 
     public static String process(String method, String filePath) throws IOException {
-        return METHOD_HANDLERS.getOrDefault(method, Optional.empty())
-                .orElseThrow
-                        (() -> new IllegalArgumentException(String.format("%s는 허용되지 않은 메서드입니다.", method)))
+        return METHOD_HANDLERS.getOrDefault(method, EXCEPTION_HANDLER)
                 .getResponseData(filePath);
     }
 }
