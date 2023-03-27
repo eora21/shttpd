@@ -16,6 +16,10 @@ public class HTMLConstructor {
                 .forEach(stringJoiner::add);
         stringJoiner.add("<br><a href=\"./..\">[Back]</a>");
         stringJoiner.add("<a href=\"/\">[Home]</a>");
+        stringJoiner.add("<form action=\"/home/uploadfiles\" method=\"post\" enctype=\"multipart/form-data\">\n" +
+                "    파일명 : <input type=\"file\" name=\"myfile\">\n" +
+                "    <button type=\"submit\">제출하기</button>\n" +
+                "</form>");
         return createHtmlData(stringJoiner.toString());
     }
 
