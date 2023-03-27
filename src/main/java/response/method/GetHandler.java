@@ -2,6 +2,7 @@ package response.method;
 
 import response.body.HTMLConstructor;
 import response.total.HeaderConstructor;
+import response.total.RequestData;
 import status.Status;
 
 import java.io.File;
@@ -11,8 +12,8 @@ import java.nio.file.Files;
 
 public class GetHandler implements MethodHandler {
     @Override
-    public String getResponseData(String filePath) throws IOException {
-        File file = new File(filePath);
+    public String getResponseData(RequestData requestData) throws IOException {
+        File file = new File(requestData.getFilePath());
 
         if (!file.exists()) {
             return response(Status.NOT_FOUND);

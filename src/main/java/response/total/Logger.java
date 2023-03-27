@@ -9,11 +9,11 @@ public class Logger {
 
     }
 
-    public static void printLog(String method, String filePath, long beforeTime, String response) {
+    public static void printLog(RequestData requestData, long beforeTime, String response) {
         StringJoiner stringJoiner = new StringJoiner("\n");
         stringJoiner.add(String.format("현재 시간: %s", LocalDateTime.now()));
-        stringJoiner.add(String.format("Method: %s", method));
-        stringJoiner.add(String.format("요청 경로: %s", filePath));
+        stringJoiner.add(String.format("Method: %s", requestData.getMethod()));
+        stringJoiner.add(String.format("요청 경로: %s", requestData.getFilePath()));
         stringJoiner.add(String.format("응답 코드: %s", getStatusInResponse(response)));
         stringJoiner.add(String.format("응답 크기: %s", getContentLength(response)));
         stringJoiner.add(String.format("응답 소요시간: %dms", getTimeTaken(beforeTime)));

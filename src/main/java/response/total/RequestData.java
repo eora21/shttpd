@@ -9,14 +9,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.StringJoiner;
 
 public class RequestData {
+    private static final String DIRECTORY = System.getProperty("user.dir");
     private final String method;
-    private final String path;
+    private final String nowPath;
+    private final String filePath;
     private final String header;
     private final String body;
 
-    public RequestData(String method, String path, String header, String body) {
+    public RequestData(String method, String nowPath, String header, String body) {
         this.method = method;
-        this.path = path;
+        this.nowPath = nowPath;
+        this.filePath = DIRECTORY + nowPath;
         this.header = header;
         this.body = body;
     }
@@ -64,8 +67,12 @@ public class RequestData {
         return method;
     }
 
-    public String getPath() {
-        return path;
+    public String getNowPath() {
+        return nowPath;
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     public String getHeader() {

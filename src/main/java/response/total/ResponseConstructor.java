@@ -23,8 +23,8 @@ public class ResponseConstructor {
             "DELETE", new DeleteHandler()
     );
 
-    public static String process(String method, String filePath) throws IOException {
-        return METHOD_HANDLERS.getOrDefault(method, NOT_ALLOWED_METHOD_HANDLER)
-                .getResponseData(filePath);
+    public static String process(RequestData requestData) throws IOException {
+        return METHOD_HANDLERS.getOrDefault(requestData.getMethod(), NOT_ALLOWED_METHOD_HANDLER)
+                .getResponseData(requestData);
     }
 }
