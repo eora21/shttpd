@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringJoiner;
 
 public class RequestData {
@@ -13,10 +15,10 @@ public class RequestData {
     private final String method;
     private final String nowPath;
     private final String filePath;
-    private final String header;
+    private final Map<String, String> header;
     private final String body;
 
-    public RequestData(String method, String nowPath, String header, String body) {
+    public RequestData(String method, String nowPath, Map<String, String> header, String body) {
         this.method = method;
         this.nowPath = nowPath;
         this.filePath = DIRECTORY + nowPath;
@@ -27,7 +29,7 @@ public class RequestData {
     public static RequestData getInstance(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String requestLine = getRequestLine(bufferedReader);
-        String requestHeader = getHeader(bufferedReader);
+        Map<String, String> requestHeader = getHeader(bufferedReader);
         String requestBody = getBody(bufferedReader);
 
         String[] partOfRequestLine = requestLine.split(" ");
@@ -42,15 +44,18 @@ public class RequestData {
         return bufferedReader.readLine();
     }
 
-    private static String getHeader(BufferedReader bufferedReader) throws IOException {
-        StringJoiner stringJoiner = new StringJoiner("\r\n");
+    private static Map<String, String> getHeader(BufferedReader bufferedReader) throws IOException {
+        Map<String, String> header = new HashMap<>();
 
         String line;
         while (!"".equals(line = bufferedReader.readLine())) {
-            stringJoiner.add(line);
+            int splitIdx = line.indexOf(':');
+            String key = line.substring(0, splitIdx);
+            String value = line.substring(splitIdx + 2);
+            header.put(key, value);
         }
 
-        return stringJoiner.toString();
+        return header;
     }
 
     private static String getBody(BufferedReader bufferedReader) throws IOException {
@@ -75,7 +80,7 @@ public class RequestData {
         return filePath;
     }
 
-    public String getHeader() {
+    public Map<String, String> getHeader() {
         return header;
     }
 
