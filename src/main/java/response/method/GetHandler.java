@@ -1,14 +1,13 @@
 package response.method;
 
 import response.body.HTMLConstructor;
-import response.total.HeaderConstructor;
 import response.total.RequestData;
 import status.Status;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+
+import static response.total.ResponseConstructor.response;
 
 public class GetHandler implements MethodHandler {
     @Override
@@ -28,30 +27,5 @@ public class GetHandler implements MethodHandler {
         }
 
         return response(file);
-    }
-
-    private static String response(Status status) {
-        String body = HTMLConstructor.createHtmlData(status.answer());
-        return response(body, status);
-    }
-
-    private static String response(String body, Status status) {
-        String header = HeaderConstructor.getHeaderData(
-                status, "html", body.getBytes(StandardCharsets.UTF_8).length);
-        return joinHeadAndBody(header, body);
-    }
-
-    private static String response(File file) throws IOException {
-        byte[] bytes = Files.readAllBytes(file.toPath());
-        String body = new String(bytes);
-        String filePath = file.getPath();
-        String contentType = filePath.substring(filePath.lastIndexOf('.') + 1);
-        String header = HeaderConstructor.getHeaderData(
-                Status.OK, contentType, bytes.length);
-        return joinHeadAndBody(header, body);
-    }
-
-    private static String joinHeadAndBody(String header, String body) {
-        return String.format("%s\r%n%n%s\r%n", header, body);
     }
 }
